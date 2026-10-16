@@ -1,39 +1,59 @@
-# RaceDay - Part 1: System Planning and Database
+# RaceDay Database
 
-## What this project is about
+This repository contains the SQL script to create and populate the **RaceDay** database. The database is designed to manage running events, organisers, categories, participants, enrolments, and results.
 
-RaceDay is a web based system built for the South African road running, walking, and cycling community. It helps Event Organisers create and manage events, categories, and participant results. It also helps Participants browse events, enter events, and track their own results.
+## Overview
 
-This part of the project, Part 1, only covers planning. No application code was written in this part. The goal was to plan the database, the API, and the roles before any coding starts in Part 2.
+The RaceDay database supports:
 
-## The two user roles
+- **Organisers** – individuals or organisations hosting events.
+- **Categories** – event types with a defined distance (e.g., 5KM, 10KM, Half Marathon).
+- **Events** – specific races scheduled on a date and location.
+- **Participants** – runners who register for events.
+- **Enrolments** – registrations linking participants to events, including payment and status tracking.
+- **Results** – official finish times, positions, and status per enrolment.
 
-**Organiser**
-An Organiser can create, edit, and delete events. An Organiser can also manage the categories inside their events, capture participant results, and view everyone who has enrolled in their events.
+The schema enforces data integrity via primary/foreign keys, check constraints, and unique constraints.
 
-**Participant**
-A Participant can create an account, browse all events, enter an event by picking a category, view their own enrolments, and check their own past results.
+## Database Schema
 
-## What is inside the /docs folder
+### Table Structure
 
-- `raceday_erd.png` - the Entity Relationship Diagram showing all 6 database tables, their fields, and how they connect to each other.
-- `api_endpoint_plan.md` - a table listing every API endpoint the system will have, including the method, route, description, role needed, request body, and expected response.
-- `raceday_database.sql` - the SQL script that creates the full database in SQL Server Management Studio (SSMS) and fills it with sample test data.
+| Table         | Description |
+|---------------|-------------|
+| `Organiser`   | Stores organiser details (name, email, phone, organisation). |
+| `Category`    | Defines race categories with distance (km) and description. |
+| `Event`       | Holds event information, linked to an organiser and a category. |
+| `Participant` | Participant profile with personal details and credentials. |
+| `Enrolment`   | Registration record linking a participant to an event, with status and payment flags. |
+| `Result`      | Results per enrolment (finish time, position, status). |
 
-## How to run the SQL script
+### Relationships
 
-1. Open SQL Server Management Studio (SSMS).
-2. Connect to your local SQL Server.
-3. Open the file `raceday_database.sql`.
-4. Click Execute to run the whole script.
-5. The script will create a new database called `RaceDayDB` with all 6 tables and sample data already inside it.
+- Each **Event** belongs to one **Organiser** and one **Category**.
+- Each **Enrolment** is for one **Participant** and one **Event** (unique pair).
+- Each **Result** corresponds to exactly one **Enrolment** (one-to-one).
 
-## CI/CD Build Status
+### Key Constraints
 
-[Add your screenshot of the successful green build here]
+- `Event.Status`: `'Upcoming'`, `'Open'`, `'Closed'`, `'Completed'`, `'Cancelled'`
+- `Enrolment.Status`: `'Active'`, `'Cancelled'`, `'Completed'`
+- `Enrolment.PaymentStatus`: `'Pending'`, `'Paid'`, `'Refunded'`
+- `Result.ResultStatus`: `'Pending'`, `'Finished'`, `'DNF'`, `'DNS'`
 
-## YouTube Video
+## Setup Instructions
 
-[Add your unlisted YouTube video link here]
+### Prerequisites
 
-In the video, I walk through the ERD and explain each table and relationship, walk through the API endpoint plan and explain the choices made, and run the SQL script live in SSMS to show it works with no errors.
+- Microsoft SQL Server (2012 or later) or Azure SQL Database.
+- SQL Server Management Studio (SSMS) or Azure Data Studio.
+- Permissions to create tables and insert data.
+
+### Steps
+
+1. **Create a database** (if not already exists).  
+   You can run:
+   ```sql
+   CREATE DATABASE RaceDay;
+   GO
+   USE RaceDay;
