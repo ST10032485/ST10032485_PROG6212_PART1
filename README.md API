@@ -1,4 +1,4 @@
-# RaceDay Database
+RaceDay Database
 
 This repository contains the SQL script to create and populate the **RaceDay** database. The database is designed to manage running events, organisers, categories, participants, enrolments, and results.
 
